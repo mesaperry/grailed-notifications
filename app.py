@@ -1,0 +1,1 @@
+from getlistings import getListings
