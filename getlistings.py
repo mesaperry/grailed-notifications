@@ -40,9 +40,6 @@ def getListings(driver, search_page):
         driver.close()
         quit()
 
-    # attempt to summon and close login popup
-    for _ in range(3):
-        driver.find_element_by_xpath("//span[text()='Buyer Protection & Authenticity Checks']").click()
 
     listings_elements = getListingsElements()
     listings = []
