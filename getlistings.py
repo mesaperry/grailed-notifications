@@ -44,5 +44,8 @@ def getListings(driver, search_page):
     listings_elements = getListingsElements()
     listings = []
     for listing_element in listings_elements:
-        listings.append(listing_element.find_element_by_tag_name("a").get_attribute("href"))
+        try:
+            listings.append(listing_element.find_element_by_tag_name("a").get_attribute("href"))
+        except:
+            pass
     return listings

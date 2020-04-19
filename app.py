@@ -12,33 +12,36 @@ if __name__ == "__main__":
     EMAIL_SUBJECT = "New Grailed.com listing"
     with open("searches.txt") as f:
         searches = f.read().splitlines()
-    searches = [search for search in searches if search != ""]
+    listings = {}
+    for search in searches:
+        if search != "":
+            listings[search] = None
 
-    if os.path.isfile(SAVED_DATA):
-        os.remove(SAVED_DATA)
-
-    count = 0
     driver = webdriver.Firefox()
+    count = 0
     while(count < 20):
-        # create listing data
-        listing_data = []
-        for search_url in searches:
-            listing_data.append(getListings(driver, search_url))
 
-        # check current listings against old listings
-        if os.path.isfile(SAVED_DATA):
-            with open(SAVED_DATA, "rb") as filehandle:
-                old_listings = pickle.load(filehandle)
-                for i in range(len(searches)):
-                    for listing in listing_data[i]:
-                        if listing not in old_listings[i]:
-                            count += 1
-                            print(listing)
-                            sendEmail(EMAIL_SUBJECT, listing)
+        next_listings = {}
+        for search, old_results in listings.items():
+            new_results = getListings(driver, search)
 
-        # save listings to file
-        with open(SAVED_DATA, "wb") as filehandle:
-            pickle.dump(listing_data, filehandle)
+            # check for new listings if old results exist
+            if old_results != None:
+                for possible_change in new_results:
+                    if possible_change not in old_results:
 
+                        # check new results again to make sure
+                        new_results = getListings(driver, search)
+                        for result in new_results:
+                            if result not in old_results:
+                                count += 1
+                                print(result)
+                                sendEmail(EMAIL_SUBJECT, result)
+                        break
 
-        time.sleep(10 * 60)
+            next_listings[search] = new_results
+
+        listings = next_listings
+
+        time.sleep(5 * 60)
+
