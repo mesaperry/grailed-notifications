@@ -27,19 +27,18 @@ if __name__ == "__main__":
 
             # check for new listings if old results exist
             if old_results != None:
-                for possible_change in new_results:
-                    if possible_change not in old_results:
+                for result in new_results:
+                    if result not in old_results:
+                        count += 1
+                        print(result)
+                        sendEmail(EMAIL_SUBJECT, result)
+            else:
+                old_results = []
 
-                        # check new results again to make sure
-                        new_results = getListings(driver, search)
-                        for result in new_results:
-                            if result not in old_results:
-                                count += 1
-                                print(result)
-                                sendEmail(EMAIL_SUBJECT, result)
-                        break
-
-            next_listings[search] = new_results
+            if new_results:
+                next_listings[search] = new_results
+            else: # avoid feeding nothing when getListings incorrectly returns nothing
+                next_listings[search] = old_results
 
         listings = next_listings
 
