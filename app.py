@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     driver = webdriver.Firefox()
     count = 0
-    while(count < 20):
+    while(count < 50):
 
         next_listings = {}
         for search, old_results in listings.items():
@@ -27,6 +27,7 @@ if __name__ == "__main__":
 
             # check for new listings if old results exist
             if old_results != None:
+                time.sleep(10)
                 for result in new_results:
                     if result not in old_results:
                         count += 1
